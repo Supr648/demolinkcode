@@ -1,59 +1,43 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ToastProvider } from './context/ToastContext';
-import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
-
-import MainLayout from './layouts/MainLayout';
-import Home from './pages/Home';
-import Products from './pages/Products';
-import ProductDetails from './pages/ProductDetails';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
-import MyOrders from './pages/MyOrders';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import NotFound from './pages/NotFound';
-import ProtectedRoute from './components/ProtectedRoute';
+import { StorefrontLayout } from './components/layout/StorefrontLayout';
+import { HomePage } from './features/catalog/pages/HomePage';
+import { ProductListPage } from './features/catalog/pages/ProductListPage';
+import { ProductDetailPage } from './features/catalog/pages/ProductDetailPage';
+import { CartPage } from './features/cart/pages/CartPage';
+import { CheckoutPage } from './features/checkout/pages/CheckoutPage';
+import { OrderConfirmationPage } from './features/checkout/pages/OrderConfirmationPage';
+import { LoginPage } from './features/account/pages/LoginPage';
+import { RegisterPage } from './features/account/pages/RegisterPage';
+import { OrdersPage } from './features/account/pages/OrdersPage';
+import { OrderDetailPage } from './features/account/pages/OrderDetailPage';
 
 export function App() {
   return (
-    <ToastProvider>
-      <AuthProvider>
-        <CartProvider>
-          <BrowserRouter>
-            <Routes>
-              {/* Storefront Layout */}
-              <Route path="/" element={<MainLayout />}>
-                <Route index element={<Home />} />
-                <Route path="products" element={<Products />} />
-                <Route path="products/:id" element={<ProductDetails />} />
-                <Route path="cart" element={<Cart />} />
-                <Route
-                  path="checkout"
-                  element={
-                    <ProtectedRoute>
-                      <Checkout />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="my-orders"
-                  element={
-                    <ProtectedRoute>
-                      <MyOrders />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="login" element={<Login />} />
-                <Route path="register" element={<Register />} />
-                <Route path="*" element={<NotFound />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </CartProvider>
-      </AuthProvider>
-    </ToastProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<StorefrontLayout />}>
+          {/* Catalog Routes */}
+          <Route index element={<HomePage />} />
+          <Route path="products" element={<ProductListPage />} />
+          <Route path="products/:id" element={<ProductDetailPage />} />
+
+          {/* Cart & Checkout Routes */}
+          <Route path="cart" element={<CartPage />} />
+          <Route path="checkout" element={<CheckoutPage />} />
+          <Route path="order-confirmation/:id" element={<OrderConfirmationPage />} />
+
+          {/* Customer Auth & Account Routes */}
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
+          <Route path="account/orders" element={<OrdersPage />} />
+          <Route path="account/orders/:id" element={<OrderDetailPage />} />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
