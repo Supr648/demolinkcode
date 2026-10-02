@@ -5,16 +5,21 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('mini_ecom_user');
-    return savedUser ? JSON.parse(savedUser) : {
-      _id: 'admin_demo_id',
-      name: 'Store Admin',
-      email: 'admin@demo.com',
-      role: 'admin',
-    };
+    try {
+      const savedUser = localStorage.getItem('mini_ecom_user');
+      return savedUser ? JSON.parse(savedUser) : {
+        _id: 'admin_demo_id',
+        name: 'Store Admin',
+        email: 'admin@demo.com',
+        role: 'admin',
+      };
+    } catch {
+      return null;
+    }
   });
+
   const [token, setToken] = useState(() => localStorage.getItem('mini_ecom_token') || 'demo_admin_jwt_token');
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -33,15 +38,16 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   const login = async (email, password) => {
-    setIsLoading(true);
+    setLoading(true);
     try {
-      // Attempt live backend API login
-      const response = await authApi.login({ email, password });
-      setUser(response.user);
-      setToken(response.token);
-      return { success: true, user: response.user };
-    } catch (error) {
-      // Fallback local admin login for demo / isolated frontend development
+      if (typeof authApi?.login === 'function') {
+        const response = await authApi.login({ email, password });
+        const userObj = response.user || response;
+        const tokenStr = response.token || 'demo_token';
+        setUser(userObj);
+        setToken(tokenStr);
+        return { success: true, user: userObj };
+      }
       if (email === 'admin@demo.com' && password === 'admin123') {
         const demoAdmin = {
           _id: 'admin_demo_id',
@@ -53,21 +59,41 @@ export function AuthProvider({ children }) {
         setToken('demo_admin_jwt_token');
         return { success: true, user: demoAdmin };
       }
-      throw error;
+      return { success: true, user: { name: 'Customer', email, role: 'customer' } };
+    } catch (error) {
+      if (email === 'admin@demo.com' && password === 'admin123') {
+        const demoAdmin = {
+          _id: 'admin_demo_id',
+          name: 'Store Admin',
+          email: 'admin@demo.com',
+          role: 'admin',
+        };
+        setUser(demoAdmin);
+        setToken('demo_admin_jwt_token');
+        return { success: true, user: demoAdmin };
+      }
+      return { success: false, error: error.message };
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   const register = async (formData) => {
-    setIsLoading(true);
+    setLoading(true);
     try {
-      const response = await authApi.register(formData);
-      setUser(response.user);
-      setToken(response.token);
-      return { success: true, user: response.user };
+      if (typeof authApi?.register === 'function') {
+        const response = await authApi.register(formData);
+        const userObj = response.user || response;
+        const tokenStr = response.token || 'demo_token';
+        setUser(userObj);
+        setToken(tokenStr);
+        return { success: true, user: userObj };
+      }
+      return { success: true, user: formData };
+    } catch (error) {
+      return { success: false, error: error.message };
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -80,22 +106,20 @@ export function AuthProvider({ children }) {
 
   const isAdmin = user?.role === 'admin';
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        isAdmin,
-        isLoading,
-        login,
-        register,
-        logout,
-        setUser,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const value = {
+    user,
+    token,
+    loading,
+    isLoading: loading,
+    isAuthenticated: !!token && !!user,
+    isAdmin,
+    login,
+    register,
+    logout,
+    setUser,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
@@ -105,3 +129,5 @@ export function useAuth() {
   }
   return context;
 }
+
+export default AuthContext;

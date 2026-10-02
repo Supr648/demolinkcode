@@ -9,10 +9,10 @@ const axiosClient = axios.create({
   },
 });
 
-// Interceptor to inject JWT Bearer token into all outgoing requests
+// Request interceptor: Attach JWT token from localStorage
 axiosClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('mini_ecom_token');
+    const token = localStorage.getItem('mini_ecom_token') || localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -21,11 +21,14 @@ axiosClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Interceptor to handle authentication responses & unauthorized errors
+// Response interceptor: Standardize response and errors
 axiosClient.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    const message = error.response?.data?.message || error.message || 'Something went wrong';
+    const message =
+      error.response?.data?.message ||
+      error.message ||
+      'Something went wrong';
     return Promise.reject(new Error(message));
   }
 );
