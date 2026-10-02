@@ -1,49 +1,51 @@
 const mongoose = require('mongoose');
 
-const orderSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  products: [
-    {
-      product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
-        required: true,
-      },
-      name: String,
-      price: Number,
-      quantity: {
-        type: Number,
-        required: true,
-        min: 1,
-      },
-      image: String,
+const orderSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
     },
-  ],
-  totalAmount: {
-    type: Number,
-    required: true,
-    min: 0,
+    products: [
+      {
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
+        },
+        name: { type: String, required: true },
+        price: { type: Number, required: true },
+        quantity: { type: Number, required: true, min: 1 },
+        image: { type: String },
+      },
+    ],
+    totalAmount: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    shippingAddress: {
+      name: { type: String, required: true },
+      phone: { type: String, required: true },
+      address: { type: String, required: true },
+      city: { type: String, required: true },
+      pincode: { type: String, required: true },
+    },
+    status: {
+      type: String,
+      enum: ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'],
+      default: 'Pending',
+    },
+    paymentMethod: {
+      type: String,
+      enum: ['Cash on Delivery'],
+      default: 'Cash on Delivery',
+    },
   },
-  shippingAddress: {
-    name: { type: String, required: true },
-    phone: { type: String, required: true },
-    address: { type: String, required: true },
-    city: { type: String, required: true },
-    pincode: { type: String, required: true },
-  },
-  status: {
-    type: String,
-    enum: ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'],
-    default: 'Pending',
-  },
-  paymentMethod: {
-    type: String,
-    default: 'Cash on Delivery',
+  {
+    timestamps: true,
   }
-}, { timestamps: true });
+);
 
 module.exports = mongoose.model('Order', orderSchema);
