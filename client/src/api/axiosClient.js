@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -10,7 +12,7 @@ const axiosClient = axios.create({
 // Request interceptor: Attach JWT token from localStorage
 axiosClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('mini_ecom_token');
+    const token = localStorage.getItem('mini_ecom_token') || localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -19,14 +21,14 @@ axiosClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor: Standardize error format
+// Response interceptor: Standardize response and errors
 axiosClient.interceptors.response.use(
-  (response) => response,
+  (response) => response.data,
   (error) => {
     const message =
       error.response?.data?.message ||
       error.message ||
-      'An unexpected network error occurred';
+      'Something went wrong';
     return Promise.reject(new Error(message));
   }
 );

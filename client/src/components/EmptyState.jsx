@@ -1,5 +1,5 @@
 import React from 'react';
-import { PackageOpen, ShoppingBag, ArrowRight } from 'lucide-react';
+import { PackageOpen, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const EmptyState = ({
@@ -21,6 +21,7 @@ export const EmptyState = ({
       </p>
       {onAction ? (
         <button
+          type="button"
           onClick={onAction}
           className="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl shadow-sm transition active:scale-95"
         >
