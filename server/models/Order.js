@@ -16,12 +16,14 @@ const orderSchema = new mongoose.Schema(
         },
         name: { type: String, required: true },
         price: { type: Number, required: true },
-        quantity: { type: Number, required: true },
+        quantity: { type: Number, required: true, min: 1 },
+        image: { type: String },
       },
     ],
     totalAmount: {
       type: Number,
       required: true,
+      min: 0,
     },
     shippingAddress: {
       name: { type: String, required: true },

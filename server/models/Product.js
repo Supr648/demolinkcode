@@ -5,6 +5,7 @@ const productSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, 'Please add a product name'],
+      trim: true,
     },
     description: {
       type: String,
@@ -17,6 +18,7 @@ const productSchema = new mongoose.Schema(
     },
     image: {
       type: String,
+      required: true,
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
