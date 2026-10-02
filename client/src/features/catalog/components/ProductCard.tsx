@@ -50,7 +50,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         className="relative block aspect-square w-full overflow-hidden bg-slate-50"
       >
         <img
-          src={product.images[0] || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80'}
+          src={product.image || product.images?.[0] || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80'}
           alt={product.name}
           loading="lazy"
           className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"

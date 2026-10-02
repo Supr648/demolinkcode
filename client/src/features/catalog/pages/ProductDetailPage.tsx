@@ -139,7 +139,7 @@ export const ProductDetailPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         {/* Left: Gallery */}
         <div className="lg:col-span-7">
-          <ImageGallery images={product.images} productName={product.name} />
+          <ImageGallery images={product.images || (product.image ? [product.image] : [])} productName={product.name} />
         </div>
 
         {/* Right: Buying Panel */}

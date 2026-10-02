@@ -1,8 +1,9 @@
-import React from 'react';
+﻿import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { CartProvider } from './context/CartContext';
+import { DemoHubBar } from './components/DemoHubBar';
 import AppRoutes from './routes/AppRoutes';
 
 export default function App() {
@@ -11,6 +12,7 @@ export default function App() {
       <ToastProvider>
         <AuthProvider>
           <CartProvider>
+            <DemoHubBar />
             <AppRoutes />
           </CartProvider>
         </AuthProvider>
