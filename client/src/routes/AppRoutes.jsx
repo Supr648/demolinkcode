@@ -33,6 +33,7 @@ export default function AppRoutes() {
         <Route path="order-confirmation/:id" element={<OrderConfirmationPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="my-orders" element={<OrdersPage />} />
         <Route path="account/orders" element={<OrdersPage />} />
         <Route path="account/orders/:id" element={<OrderDetailPage />} />
       </Route>
